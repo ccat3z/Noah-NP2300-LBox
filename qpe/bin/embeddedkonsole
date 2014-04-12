@@ -1,0 +1,9 @@
+#! /bin/sh
+export PATH="/opt/lbox/bin/:$PATH"
+export LD_LIBRARY_PATH="/opt/lbox/lib/:$LD_LIBRARY_PATH"
+mount /opt/lbox/lib/qt-2.3.10 /opt/qt-2.3.10/lib
+mount /opt/lbox/lib/QtPalmtop /opt/QtPalmtop/lib
+run_embeddedkonsole &
+sleep 5s
+umount -l /opt/qt-2.3.10/lib
+umount -l /opt/QtPalmtop/lib

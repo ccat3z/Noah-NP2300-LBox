@@ -1,0 +1,12 @@
+#! /bin/sh
+mount -o rw,remount /
+echo  '#device                dir              type           para      dump fsck
+# 							para = [ro rw aufo defaults]
+#/dev/null 		/tmp 		 ramfs		defaults   0 	0
+none 		        /tmp 		 ramfs		defaults   0 	0
+ubi0:Settings           /mnt/Settings    ubifs          defaults   0    0
+ubi0:ProgFS             /mnt/ProgFS      ubifs          rw         0    0
+ubi0:Data               /mnt/Data        ubifs          rw         0    0
+#ubi0:UsrFS              /mnt/UsrFS       ubifs          defaults   0    0
+devpts                  /dev/pts         devpts         defaults   0    0
+#ubi1:UsrDisk            /mnt/UsrDisk     ubifs           rw         0   0' > /etc/fstab

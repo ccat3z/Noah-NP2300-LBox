@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=embeddedkonsole
+Icon=lbox/konsole
+ForcusIcon=lbox/konsole
+Type=Application
+Name=Konsle
+Comment=v1.0
+Name[zh_CN]=虚拟终端
+Comment[zh_CN]=V1.0

@@ -1,0 +1,57 @@
+#!/bin/sh
+
+export PATH="/opt/lbox/bin/:$PATH"
+export LD_LIBRARY_PATH="/opt/lbox/lib/:$LD_LIBRARY_PATH"
+
+[ $(qmsgbox 11 "!强行结束!" "" "" 0 -1 "命令执行器" "正在加载中......
+如选择强行结束
+请手动关闭运行命令!") = 0 ] && killname qmsgbox command c.txt&
+
+dir=/tmp/command
+out=$dir/cz.txt
+[ ! -d $dir ]&&mkdir -p $dir
+
+
+{
+  echo -e '>>>Start<<<\n'
+  /mnt/UsrDisk/工具/记事本/c.txt
+  echo -e '\n>>>End<<<'
+} &> $out
+
+killall qmsgbox
+
+#qt
+show()
+{
+if [ $1 = a ];then
+case $(qmsgbox 11 "下一页" "退出" "用ebook打开" 0 1 "命令执行器" "$(cat a)") in
+0) show b ;;
+2) ebook $out & 
+sleep 2s;;
+esac
+else
+if [ -f $1 ];then
+case $(qmsgbox 11 "上一页" "下一页" "退出" 1 2 "命令执行器" "$(cat $1)") in
+0) show $(pluschar $1 -1) ;;
+1) show $(pluschar $1 +1) ;;
+esac
+else
+case $(qmsgbox 13 "上一页" "退出" "首页" 1 1 "命令执行器" "没有啦") in
+0) show $(pluschar $1 -1) ;;
+2) show a ;;
+esac
+fi
+fi
+}
+autoline 80 $out "${out}2"
+mkdir $dir/split/
+split -a 1 -l 16 "${out}2" $dir/split/
+cd $dir/split
+show a
+cd ..
+rm -r ./split
+rm -r ${out}2
+
+[ $(qmsgbox 11 "是" "否" "" 0 1 "命令执行器" "是否保存命令结果?
+保存于储存卡/命令.txt") = 0 ] && cp $out /mnt/mmc/命令.txt
+     

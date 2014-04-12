@@ -1,0 +1,66 @@
+#! /bin/sh
+if [ "1${1}" != "1run" ];then
+$0 run &
+elif [ "1${1}" = "1run" ];then
+
+tmpfile='/tmp/fixnpkill.tmp'
+if [ ! -f $tmpfile ];then
+touch $tmpfile
+sleep 1s
+rm $tmpfile
+exit
+fi
+
+rm -f $tmpfile
+exec &> /dev/tty0 < /dev/tty0 
+sleep 1s
+clear
+
+echo -e "\n\n\n\tFixnpkill" 
+
+echo -en "\tup\t"
+echo ""
+
+echo -en "\tdown\t"
+echo "Run fixnpkill"
+
+echo -en "\tleft\t"
+echo "Run /mnt/mmc/Work/test"
+
+echo -en "\tright\t"
+echo ""
+
+read -n 3 a
+echo -en "\b\b\b\b     "
+echo
+
+up() 
+{
+echo -e "\tup"
+}
+
+down() 
+{
+echo -e "\tdown"
+/opt/lbox/bin/fixnpkill
+}
+
+left() 
+{ 
+echo -e "\tleft"
+/mnt/mmc/Work/test
+}
+
+right()
+{ 
+echo -e "\tright"
+}
+
+case $a in
+*A) up ;;
+*B) down ;;
+*C) right ;;
+*D) left ;;
+*) echo -e "\tError!" ;;
+esac
+fi

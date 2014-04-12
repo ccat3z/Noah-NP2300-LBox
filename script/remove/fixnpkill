@@ -1,0 +1,4 @@
+#! /bin/sh
+
+rm /sbin/fixnpkill
+cp /opt/lbox/bin/fixnpkill /sbin/fixnpkill

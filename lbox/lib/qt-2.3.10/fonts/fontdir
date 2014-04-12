@@ -1,0 +1,23 @@
+# see fonts-qws.html for mor information on this file.
+# format is
+#
+# name file renderer italic weight size [flags [sizerange]]
+#
+# set size as 0 to use sizerange.  flags are option if no sizerange
+# name is the name of the resulting font
+# file is the file to generate or render the font from
+# renderer is either FT or BDF indicating the rendering engine to use
+# italic is y for an italic font, n for not italic
+# weight is 50 for regular font, 75 for bold
+# size is 10* point size.  e.g. 120 for 12pt font.
+# flags include
+#    u = unicode font.  characters from 0-65535
+#    a = ascii font.  characters from 0-127
+#      <neither of the above is font with characters 0-255>
+#    s = smooth or blended font.
+# flags is optional if no sizerange is to be used (size is 0)
+# sizerange is optional unless size is 0.
+#    sizerange is comma separated list of font sizes to generate
+#
+fixed 5x7.bdf BDF n 50 70 u
+fixed 6x13.bdf BDF n 50 120 u

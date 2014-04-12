@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=command
+Icon=lbox/command
+ForcusIcon=lbox/command
+Type=Application
+Name=Command
+Comment=v1.0
+Name[zh_CN]=命令执行器
+Comment[zh_CN]=V1.0

@@ -1,0 +1,235 @@
+#! /bin/sh
+
+export PATH="/opt/lbox/bin/:$PATH"
+export LD_LIBRARY_PATH="/opt/lbox/lib/:$LD_LIBRARY_PATH"
+
+#debian [mount|umount|info|chroot] [chroot command]
+debian()
+{
+dev=/dev/mmcblk0p2
+dir=/mnt/mmc/Chroot
+root=${dir}/debian
+case $1 in
+mount)
+#dmount [dir] [dev] [type]
+dmount() { 
+if [ -n "$(grep ${1} < /proc/mounts)" ]; then
+  echo -e "\t\t[skip]"
+  return 2
+else
+  if [ -n "$(mount ${3} ${2} ${1} 2>&1 >/dev/null)" ]; then
+    echo -e "\t\t[fall]"
+    return 1
+  else
+    echo -e "\t\t[done]"
+    return 0
+  fi
+fi
+}
+
+echo -n 'mkdir mount point...'
+if [ -d "${dir}" ]; then
+  echo -e "\t\t[skip]"
+else
+  if [ -n "$(mkdir -p ${dir})" ]; then
+      echo -e "\t\t[fall]"
+    else
+      echo -e "\t\t[done]"
+  fi
+fi
+
+echo -n 'mount debian rootfs...'
+dmount ${dir} ${dev} "-t ext2"
+
+echo -n 'mount debian tmpfs...'
+#dmount "${root}/tmp" "tmpfs" "-t tmpfs"
+dmount "${root}/tmp" "/tmp" "-o bind"
+
+echo -n 'mount debian sdcard...'
+dmount "${root}/mnt/mmc" "/mnt/mmc" "-o bind"
+
+echo -n 'mount debian UsrDisk...'
+dmount "${root}/mnt/UsrDisk" "/mnt/UsrDisk" "-o bind"
+
+echo -n 'mount debian proc...'
+dmount "${root}/proc" "proc" "-t proc"
+
+echo -n 'mount debian sysfs...'
+dmount "${root}/sys" "sysfs" "-t sysfs"
+
+echo -n 'mount debian dev...'
+dmount "${root}/dev" "tmpfs" "-t tmpfs"
+
+t=$?
+echo -en 'run udevstart\t'
+if [ $t != 0 ]; then
+  echo -e "\t\t[skip]"
+else
+  chroot_udevstart(){
+    export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+    chroot ${root} udevstart
+  }
+  if [ -n "$(chroot_udevstart 2>&1 >/dev/null)" ]; then
+    echo -e "\t\t[fall]"
+  else
+    echo -e "\t\t[done]"
+  fi
+fi
+
+echo -n 'mkdir debian devpts...'
+if [ -d "${root}/dev/pts" ]; then
+  echo -e "\t\t[skip]"
+else
+  if [ -n "$(mkdir ${root}/dev/pts 2>&1 >/dev/null)" ]; then
+    echo -e "\t\t[fall]"
+  else
+    echo -e "\t\t[done]"
+  fi
+fi
+
+echo -n 'mount debian devpts...'
+dmount "${root}/dev/pts" "devpts" "-t devpts"
+;;
+umount)
+#dumount [dir]
+dumount() { 
+if [ ! -n "$(grep ${1} < /proc/mounts)" ]; then
+  echo -e "\t\t[skip]"
+  return 2
+else
+  if [ -n "$(umount ${1} 2>&1 >/dev/null)" ]; then
+    echo -e "\t\t[fall]"
+    return 1
+  else
+    echo -e "\t\t[done]"
+    return 0
+  fi
+fi
+}
+
+echo -n 'umount debian tempfs...'
+dumount "${root}/tmp"
+
+echo -n 'umount debian sdcard...'
+dumount "${root}/mnt/mmc"
+
+echo -n 'umount debian UsrDisk..'
+dumount "${root}/mnt/UsrDisk"
+
+echo -n 'umount debian devpts...'
+dumount "${root}/dev/pts"
+
+echo -n 'umount debian dev...'
+dumount "${root}/dev"
+
+echo -n 'umount debian proc...'
+dumount "${root}/proc"
+
+echo -n 'umount debian sysfs...'
+dumount "${root}/sys"  
+
+echo -n 'umount debian rootfs...'
+dumount ${dir}
+;;
+info)
+#dinfo [dir]
+dinfo() { 
+if [ ! -n "$(grep ${1} < /proc/mounts)" ]; then
+  echo -e "\t\t[umount]"
+else
+  echo -e "\t\t[mount]"
+fi
+}
+
+echo -n 'check debian tempfs...'
+dinfo "${root}/tmp"
+
+echo -n 'check debian sdcard...'
+dinfo "${root}/mnt/mmc"
+
+echo -n 'check debian UsrDisk...'
+dinfo "${root}/mnt/UsrDisk"
+
+echo -n 'check debian devpts...'
+dinfo "${root}/dev/pts"
+
+echo -n 'check debian dev...'
+dinfo "${root}/dev"
+
+echo -n 'check debian proc...'
+dinfo "${root}/proc"
+
+echo -n 'check debian sysfs...'
+dinfo "${root}/sys"  
+
+echo -n 'check debian rootfs...'
+dinfo ${dir}
+;;
+chroot)
+#echo -e "Chroot...\n\n--start--\n"
+if [ -n "$2" ];then
+chroot ${root} $2
+else
+echo "$0 debian chroot [chroot command]"
+fi
+#echo -e "\n--end--"
+;;
+*)
+echo "$0 debian [mount|umount|info|chroot] [chroot command]"
+;;
+esac
+}
+
+#swap [on|off|info]
+swap()
+{
+case $1 in
+on)swapon /dev/mmcblk0p3;free;;
+off)swapoff /dev/mmcblk0p3;free;;
+info)free;;
+*)echo "$0 swap [on|off|info]";;
+esac
+}
+
+#qt
+qt()
+{
+msg=qmsgbox
+log="/tmp/mmcex"
+exec &> $log
+plog()
+{
+$msg 11 "Done" "" "" 0 0 "MmcEX QT LOG" "MmcEX QT LOG:
+$(cat $log)"
+}
+case $($msg 11 "Swap" "Debian" "Quit" 0 2 "MmcEX QT v2.0" "MmcEX QT") in
+0)
+  case $($msg 11 "ON" "OFF" "INFO" 0 -1 "MmcEX QT Swap" "MmcEX Swap") in
+  0)swap on;plog;;
+  1)swap off;plog;;
+  2)swap info;plog;;
+  *)exit;;
+  esac
+;;
+1)
+  case $($msg 11 "Mount" "Umount" "Info" 0 -1 "MmcEX QT Debian" "MmcEX Debian") in
+  0)debian mount;plog;;
+  1)debian umount;plog;;
+  2)debian info;plog;;
+  *)exit;;
+  esac
+;;
+*) exit;;
+esac
+}
+
+case $1 in
+s|swap) swap $2 ;;
+d|debian) debian $2 $3 ;;
+-h|--help) 
+    echo "MmcEx v2.2"
+    echo "$0 [s(wap)] [on|off|info]"
+    echo "$0 [d(ebian)] [start|stop|info|chroot] [chroot command]"
+;;
+*) qt ;;
+esac
