@@ -1,16 +1,19 @@
-#! /bin/sh
+#! /bin/sh 
 
 #LBox for NP2300
 
 lbox=$(dirname $0)
 cd $lbox
-[ $(./qmsgbox 11 "NEXT" "" "" 0 -1 "INSTALL" "INSTALL") != 0 ]&&exit
 
-clear > /dev/tty0
-echo -e "\n\n\n\n\n\n\n\nRunning..." > /dev/tty0
 exec &> /tmp/LBox
-
 echo "LBox 安装器"
+
+case $(./qmsgbox 11 "安装(升级)" "卸载" "脚本" 0 -1 "LBox" "LBox安装程序") in
+0)
+
+sleep 1s
+clear > /dev/tty0
+echo -e "\n\n\n\n\n\n\n\n" > /dev/tty0
 
 logi=$lbox/log/install.log
 
@@ -19,17 +22,18 @@ echoline() { echo "---------------" ;}
 running()
 {
 case $running in
-'/') running='\' ; echo -en "\b$running" > /dev/tty0;;
-'\') running='-' ; echo -en "\b$running" > /dev/tty0;;
-'-') running='/' ; echo -en "\b$running" > /dev/tty0;;
+'\') running='/' ; echo -en "\b$running" > /dev/tty0;;
+'/') running='-' ; echo -en "\b$running" > /dev/tty0;;
+'-') running='\' ; echo -en "\b$running" > /dev/tty0;;
 *) running='/' ; echo -en "\b$running" > /dev/tty0;;
 esac
 }
 
 running
 echoline
-echo "rm rmfile"
+echo "rm..."
 echoline
+
 for rf in $([ -f $logi ]&&cat $logi)
 do
   rfa=$(echo $rf|sed "s#/opt/lbox/#lbox/#g")
@@ -92,7 +96,57 @@ do
 done
 cd ..
 echo -e "\b100% Done." > /dev/tty0
+;;
+1)
+cd script/remove
+for s in $(ls)
+do
+./${s}
+done
+cd ../../
 
+logi=$lbox/log/install.log
+logr=$lbox/log/remove.log
+
+logr() { echo $1 >> $logr ;}
+
+if [ -f $logi ];then
+  [ -f $logr ]&&mv -f $logr ${logr}.old
+  for file in $(cat $logi)
+  do
+    if [ -f $file -o -d $file ];then
+      rm -r $file
+      echo "rm $file"
+      logr $file
+    fi
+  done
+  mv -f $logi ${logi}.old
+fi
+;;
+2)
+case $(./qmsgbox 11 "安装" "卸载" "退出" 0 2 "LBox" "安装/卸载脚本") in
+0)
+cd script/install
+for s in $(ls)
+do
+./${s}
+done
+cd ../../
+;;
+1)
+cd script/remove
+for s in $(ls)
+do
+./${s}
+done
+cd ../../
+;;
+esac
+;;
+*) exit ;;
+esac
+
+sleep 1s
 cat /tmp/LBox | iconv -f gb2312 -t utf-8 > /tmp/LBox.html
 helpbrowser /tmp/LBox.html
 rm /tmp/LBox.html /tmp/LBox
