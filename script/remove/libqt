@@ -1,0 +1,7 @@
+#! /bin/sh
+
+cd /opt/lbox/lib/QtPalmtop
+rm libqpe.so libqpe.so.1 libqpe.so.1.5
+
+cd /opt/lbox/lib/qt-2.3.10
+rm libqte-mt.so libqte-mt.so.2 libqte-mt.so.2.3 libqte.so libqte.so.2 libqte.so.2.3 libqutil.so libqutil.so.1 libqutil.so.1.0

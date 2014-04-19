@@ -1,0 +1,18 @@
+#! /bin/sh
+
+
+cd /opt/lbox/lib/QtPalmtop
+ln -s libqpe.so.1.5.0 libqpe.so
+ln -s libqpe.so.1.5.0 libqpe.so.1
+ln -s libqpe.so.1.5.0 libqpe.so.1.5
+
+cd /opt/lbox/lib/qt-2.3.10
+ln -s libqte-mt.so.2.3.10 libqte-mt.so
+ln -s libqte-mt.so.2.3.10 libqte-mt.so.2
+ln -s libqte-mt.so.2.3.10 libqte-mt.so.2.3
+ln -s libqte.so.2.3.10 libqte.so
+ln -s libqte.so.2.3.10 libqte.so.2
+ln -s libqte.so.2.3.10 libqte.so.2.3
+ln -s libqutil.so.1.0.0 libqutil.so
+ln -s libqutil.so.1.0.0 libqutil.so.1
+ln -s libqutil.so.1.0.0 libqutil.so.1.0
