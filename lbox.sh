@@ -5,20 +5,26 @@
 lbox=$(dirname $0)
 cd $lbox
 
-exec &> /tmp/LBox
-echo "LBox 安装器"
+msg=./qmsgbox
 
-case $(./qmsgbox 11 "安装(升级)" "卸载" "脚本" 0 -1 "LBox" "LBox安装程序") in
-0)
-
+#安装文件#
+inst_file()
+{
 sleep 1s
 clear > /dev/tty0
 echo -e "\n\n\n\n\n\n\n\n" > /dev/tty0
 
-logi=$lbox/log/install.log
+log=$lbox/log/install.log
 
-logi() { echo $1 >> $logi ;}
-echoline() { echo "---------------" ;}
+log() { echo $1 >> $log ;}
+
+title()
+{
+echo "---------------"
+echo $1
+echo "---------------"
+}
+
 running()
 {
 case $running in
@@ -30,120 +36,145 @@ esac
 }
 
 running
-echoline
-echo "rm..."
-echoline
+title "Remove..."
 
-for rf in $([ -f $logi ]&&cat $logi)
+for rf in $([ -f $log ]&&cat $log)
 do
-  rfa=$(echo $rf|sed "s#/opt/lbox/#lbox/#g")
-  rfb=$(echo $rf|sed "s#/opt/QtPalmtop/#qpe/#g")
+  rfa=$(echo $rf|sed 's#/opt/lbox#lbox#g')
+  rfb=$(echo $rf|sed 's#/opt/QtPalmtop#qpe#g')
   [ ! -d $rf ] && { [ -f ./${rfa} -o -f ./${rfb} ]||{ rm $rf ; echo "rm $rf" ;} ;}
   [ -d $rf ] && { [ -d ./${rfa} -o -d ./${rfb} ]||{ rm -r $rf ; echo "rm $rf" ;} ;}
   running
 done
 
 echo -e "\b33% Done." > /dev/tty0
-[ -f $logi ]&&mv -f $logi ${logi}.old
 
-idir()
+[ -f $log ]&&rm $log
+
+inst()
 {
 [ ! -d $2 ]&&mkdir -p $2
-for f in $(ls $1)
+for inst_file in $(ls $1)
 do
-  if [ -d $1/$f ];then
-    dir="$2/$f"
-    idir $1/$f $2/$f
-    logi $dir
+  if [ -d $1/$inst_file ];then
+    inst "$1/$inst_file" "$2/$inst_file"
   else
-  if [ ! -f $2/$f ];then
-    echo "install $2/$f"
-    cp -d $1/$f $2/$f
-  else
-  if [ -n "$( diff -q "$1/$f" "$2/$f" )" ];then
-    echo "upgrade $2/$f"
-    cp -d $1/$f $2/$f
-  else
-    echo "skip $2/$f"
-  fi
-  fi
-  logi "$2/$f"
+    if [ ! -f $2/$inst_file ];then
+      echo "Install $2/$inst_file"
+      cp "$1/$inst_file" "$2/$inst_file"
+    else
+      if [ -n "$( diff -q "$1/$inst_file" "$2/$inst_file" )" ];then
+        echo "Upgrade $2/$inst_file"
+        cp  $1/$inst_file $2/$inst_file
+      else
+        echo "Skip $2/$inst_file"
+      fi
+    fi
+  log "$2/$inst_file"
   fi
   running
 done
+log $2
 }
 
-cd lbox
-for d in apps apps2 bin data lib pics share
-do
-  echoline
-  echo "install/upgrade $d(lbox)"
-  echoline
-  idir $d /opt/lbox/$d
-  echo
-done
-cd ..
+title "Install/Upgrade(lbox)"
+inst lbox /opt/lbox
+
 echo -e "\b66% Done." > /dev/tty0
 
 cd qpe
 for d in apps2 apps/5Tool bin data lib pics
 do
-  echoline
-  echo "install/upgrade ${d}(qpe)"
-  echoline
-  idir $d /opt/QtPalmtop/$d
-  echo
+  title "Install/Upgrade ${d}(qpe)"
+  inst $d /opt/QtPalmtop/$d
 done
 cd ..
+
 echo -e "\b100% Done." > /dev/tty0
-;;
-1)
-cd script/remove
-for s in $(ls)
-do
-./${s}
-done
-cd ../../
+}
+#END#
 
-logi=$lbox/log/install.log
-logr=$lbox/log/remove.log
+#卸载文件#
+rm_file()
+{
+log=$lbox/log/install.log
 
-logr() { echo $1 >> $logr ;}
-
-if [ -f $logi ];then
-  [ -f $logr ]&&mv -f $logr ${logr}.old
-  for file in $(cat $logi)
+if [ -f $log ];then
+  for file in $(cat $log)
   do
-    if [ -f $file -o -d $file ];then
-      rm -r $file
-      echo "rm $file"
-      logr $file
+    if [ -f $file ];then
+      rm $file
+      echo "Remove $file"
+    elif [ -d $file ];then
+      if [ ! -n "$(ls -A $file)" ];then
+        rm -r $file
+        echo "Rmdir $file"
+      else
+        echo "Skip $file (目录非空)"
+      fi
+    else
+      echo "Skip $file (无此文件)"
     fi
   done
-  mv -f $logi ${logi}.old
+  rm $log
 fi
-;;
-2)
-case $(./qmsgbox 11 "安装" "卸载" "退出" 0 2 "LBox" "安装/卸载脚本") in
-0)
+}
+#END#
+
+#安装脚本#
+inst_script()
+{
 cd script/install
 for s in $(ls)
 do
 ./${s}
 done
 cd ../../
-;;
-1)
+}
+#END#
+
+#卸载脚本#
+rm_script()
+{
 cd script/remove
 for s in $(ls)
 do
 ./${s}
 done
 cd ../../
+}
+#END#
+
+exec &> /tmp/LBox
+
+echo "LBox 安装器"
+
+case $($msg 11 "安装" "卸载" "升级" 0 -1 "LBox" "LBox安装程序") in
+0)
+[ "$($msg 12 "继续" "取消" "" 0 1 "LBox" "确认安装?
+(如果您已安装LBox,
+请不要继续,以防止未知错误.)")" = 1 ]&&exit
+inst_file
+inst_script
 ;;
-esac
+1)
+[ "$($msg 12 "继续" "取消" "" 0 1 "LBox" "确认卸载?
+(如果您未安装LBox,
+请不要继续,以防止未知错误.)")" = 1 ]&&exit
+rm_script
+rm_file
 ;;
-*) exit ;;
+2)
+[ "$($msg 12 "继续" "取消" "" 0 1 "LBox" "确认升级?
+(如果您未安装LBox,
+请不要继续,以防止未知错误.)")" = 1 ]&&exit
+rm_script
+inst_file
+inst_script
+;;
+*)
+exit 
+;;
 esac
 
 sleep 1s
