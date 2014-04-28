@@ -3,24 +3,53 @@
 export PATH="/opt/lbox/bin/:$PATH"
 export LD_LIBRARY_PATH="/opt/lbox/lib/:$LD_LIBRARY_PATH"
 
-[ $(qmsgbox 11 "!强行结束!" "" "" 0 -1 "命令执行器" "正在加载中......
-如选择强行结束
-请手动关闭运行命令!") = 0 ] && killname qmsgbox command c.txt&
+qmsgbox 11 "运行中..." "" "" 0 -1 "命令执行器" "正在运行中......" &> /dev/null &
 
-dir=/tmp/command
-out=$dir/cz.txt
+dir="/tmp/command"
+out="$dir/cz.txt"
+command="/mnt/UsrDisk/工具/记事本/c.txt"
 [ ! -d $dir ]&&mkdir -p $dir
 
+#Default option
+viewer=qt
+iconv=off
+
+#Read option
+for option in $(sed -n '/^#+/s/#+//p' $command)
+do
+  case $option in
+  viewer=*?)
+    viewer="$(echo $option | sed -n 's/viewer=//p')"
+    case $viewer in
+    qt|ebook|html) ;;
+    *) viewer=qt ;;
+    esac
+  ;;
+  iconv=*?TO*?)
+    iconv=on
+    iconv_f="$(echo $option | sed 's/iconv=// ; s/TO.*//')"
+    iconv_t="$(echo $option | sed 's/iconv=// ; s/.*TO//')"
+  ;;
+  esac
+done
 
 {
   echo -e '>>>Start<<<\n'
-  /mnt/UsrDisk/工具/记事本/c.txt
+  $command
   echo -e '\n>>>End<<<'
 } &> $out
 
+#ICONV START#
+if [ "$iconv" = "on" ];then
+  mv $out "${out}.orig"
+  iconv -c -f $iconv_f -t $iconv_t ${out}.orig > $out
+fi
+#ICONV END#
+
 killall qmsgbox
 
-#qt
+#QT START#
+if [ "$viewer" = "qt" ];then
 show()
 {
 if [ $1 = a ];then
@@ -43,15 +72,35 @@ esac
 fi
 fi
 }
-autoline 80 $out "${out}2"
-mkdir $dir/split/
-split -a 1 -l 16 "${out}2" $dir/split/
-cd $dir/split
+autoline 80 $out "${out}.qt"
+mkdir $dir/qt-split/
+split -a 1 -l 16 "${out}.qt" $dir/qt-split/
+cd $dir/qt-split
 show a
 cd ..
-rm -r ./split
-rm -r ${out}2
+rm -r ./qt-split
+rm -r "${out}.qt"
+fi
+#QT END#
+
+#EBOOK START#
+if [ "$viewer" = "ebook" ];then
+  ebook $out &
+fi
+#EBOOK END#
+
+#HELPBROWSER START#
+{
+if [ "$viewer" = "html" ];then
+  html=${out}.html
+  ln -s ${out} ${html}
+  helpbrowser ${html}
+  rm ${html}
+fi
+} &
+#HELPBROWSER END#
+
 
 [ $(qmsgbox 11 "是" "否" "" 0 1 "命令执行器" "是否保存命令结果?
-保存于储存卡/命令.txt") = 0 ] && cp $out /mnt/mmc/命令.txt
+保存于储存卡/save.txt") = 0 ] && cp $out /mnt/mmc/save.txt
      
