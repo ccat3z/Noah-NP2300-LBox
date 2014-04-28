@@ -26,7 +26,7 @@
 在本地磁盘/工具/记事本/c.txt中加入选项  
 以'#+'为开头,程序会自动读取  
 e.g.  
-#+viewer=ebook iconv=utf-8TOgbk  
+\#+viewer=ebook iconv=utf-8TOgbk  
 支持的选项:  
 1:viewer=qt|ebook|html|tty  
 说明:用QT对话框(默认),电子书,Helpbrowser,TTY查看执行结果  
