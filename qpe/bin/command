@@ -87,20 +87,22 @@ fi
 if [ "$viewer" = "ebook" ];then
   ebook $out &
 fi
+sleep 3s
 #EBOOK END#
 
 #HELPBROWSER START#
-{
 if [ "$viewer" = "html" ];then
-  html=${out}.html
-  ln -s ${out} ${html}
-  helpbrowser ${html}
-  rm ${html}
+  {
+    html=${out}.html
+    ln -s ${out} ${html}
+    helpbrowser ${html}
+    rm ${html}
+  } &
 fi
-} &
+sleep 3s
 #HELPBROWSER END#
 
 
 [ $(qmsgbox 11 "是" "否" "" 0 1 "命令执行器" "是否保存命令结果?
-保存于储存卡/save.txt") = 0 ] && cp $out /mnt/mmc/save.txt
+保存于储存卡/命令.txt") = 0 ] && cp $out /mnt/mmc/命令.txt
      
