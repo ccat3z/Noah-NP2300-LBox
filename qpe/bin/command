@@ -21,7 +21,7 @@ do
   viewer=*?)
     viewer="$(echo $option | sed -n 's/viewer=//p')"
     case $viewer in
-    qt|ebook|html) ;;
+    qt|ebook|html|tty) ;;
     *) viewer=qt ;;
     esac
   ;;
@@ -33,11 +33,30 @@ do
   esac
 done
 
+#TTY START1/2#
+if [ "$viewer" = "tty" ];then
+sleep 1s
+killall qmsgbox
+sleep 1s
+exec &> /dev/tty0 < /dev/tty0
+out=/dev/tty0
+clear
+echo -e "\n\n\n\n"
+fi
+#TTY END1/2#
+
 {
   echo -e '>>>Start<<<\n'
   $command
   echo -e '\n>>>End<<<'
 } &> $out
+
+
+#TTY START2/2#
+if [ "$viewer" = "tty" ];then
+exit
+fi
+#TTY END2/2#
 
 #ICONV START#
 if [ "$iconv" = "on" ];then
