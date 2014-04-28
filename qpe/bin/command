@@ -105,8 +105,8 @@ fi
 #EBOOK START#
 if [ "$viewer" = "ebook" ];then
   ebook $out &
+  sleep 3s
 fi
-sleep 3s
 #EBOOK END#
 
 #HELPBROWSER START#
@@ -117,8 +117,8 @@ if [ "$viewer" = "html" ];then
     helpbrowser ${html}
     rm ${html}
   } &
+  sleep 3s
 fi
-sleep 3s
 #HELPBROWSER END#
 
 
