@@ -7,14 +7,16 @@ cd $lbox
 
 msg=./qmsgbox
 
+
+log=$lbox/log/install.log
+[ ! -d "$(dirname $log)" ]&&mkdir -p "$(dirname $log)"
+
 #安装文件#
 inst_file()
 {
 sleep 1s
 clear > /dev/tty0
 echo -e "\n\n\n\n\n\n\n\n" > /dev/tty0
-
-log=$lbox/log/install.log
 
 log() { echo $1 >> $log ;}
 
@@ -97,8 +99,6 @@ echo -e "\b100% Done." > /dev/tty0
 #卸载文件#
 rm_file()
 {
-log=$lbox/log/install.log
-
 if [ -f $log ];then
   for file in $(cat $log)
   do
