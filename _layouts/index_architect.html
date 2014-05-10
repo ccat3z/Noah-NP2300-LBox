@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel='stylesheet' type='text/css' href="stylesheets/fonts.css" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>{{ site.title_page }}</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>{{ site.title_name }}</h1>
+        <h2>{{ site.title_info }}</h2>
+        <a href="https://github.com/FireZ-ZLF/test" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          {{ content }}
+        </section>
+
+        <aside id="sidebar">
+          <a href="{{ site.download_zip }}" class="button" title="{{ site.version }}">
+            <small>最新下载</small>
+            .zip file
+          </a>
+          <a href="{{ site.download_gz }}" class="button" title="{{ site.version }}">
+            <small>最新下载</small>
+            .tar.gz file
+          </a>
+          <a href="{{ site.download_pan_zip }}" class="button" title="{{ site.version_pan }}">
+            <small>百度网盘</small>
+            .zip file
+          </a>
+          <a href="{{ site.download_pan_gz }}" class="button" title="{{ site.version_pan }}">
+            <small>百度网盘</small>
+            .tar.gz file
+          </a>
+
+
+          <p class="repo-owner"><a href="https://github.com/FireZ-ZLF/Noah-NP2300-LBox"></a>本页由<a href="https://github.com/FireZ-ZLF">FireZ-ZLF</a>维护.</p>
+          <p>本页由<a href="https://pages.github.com">GitHub Pages</a>产生.
+          <br />
+          使用<a href="https://twitter.com/jasonlong">Jason Long</a>的Architect主题.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
