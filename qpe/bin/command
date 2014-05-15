@@ -13,6 +13,7 @@ command="/mnt/UsrDisk/工具/记事本/c.txt"
 #Default option
 viewer=qt
 iconv=off
+dcc=off
 
 #Read option
 for option in $(sed -n '/^#+/s/#+//p' $command)
@@ -29,6 +30,9 @@ do
     iconv=on
     iconv_f="$(echo $option | sed 's/iconv=// ; s/TO.*//')"
     iconv_t="$(echo $option | sed 's/iconv=// ; s/.*TO//')"
+  ;;
+  delcolourcode=on)
+    dcc=on
   ;;
   esac
 done
@@ -64,6 +68,12 @@ if [ "$iconv" = "on" ];then
   iconv -c -f $iconv_f -t $iconv_t ${out}.orig > $out
 fi
 #ICONV END#
+
+#DELCOLOURCODE START#
+if [ "$dcc" = "on" ];then
+  sed -i 's/.\{1\}\[[0123457][0-9]\?;\?[0123457]\?[0-9]\?;\?[0123457]\?[0-9]\?m//g' ${out} $out
+fi
+#DELCOLOURCODE END#
 
 killall qmsgbox
 
