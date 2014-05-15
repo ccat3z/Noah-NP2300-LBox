@@ -1,0 +1,3 @@
+#! /bin/sh
+
+sed -i '/html = apps2\/undisplay\/html.desktop/d' /opt/QtPalmtop/apps/resourcemanager.app

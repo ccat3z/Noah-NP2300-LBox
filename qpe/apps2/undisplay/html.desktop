@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=helpbrowser
+Icon=static/desktop/html
+ForcusIcon=static/desktop/html
+Type=Application
+Name=html
+Comment=v1.0
+Name[zh_CN]=html
+Comment[zh_CN]=v1.0

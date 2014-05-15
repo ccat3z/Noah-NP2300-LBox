@@ -1,0 +1,3 @@
+#! /bin/sh
+
+echo "html = apps2/undisplay/html.desktop" >> /opt/QtPalmtop/apps/resourcemanager.app
