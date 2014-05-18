@@ -1,4 +1,4 @@
-markdown: redcarpet
+markdown: rdiscount 
 pygments: true
 
 project_github:         https://github.com/FireZ-ZLF/Noah-NP2300-LBox

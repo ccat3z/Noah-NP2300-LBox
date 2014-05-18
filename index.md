@@ -52,7 +52,6 @@ e.g.
 ##截图
 暂无  
 
-##论坛地址
-[阿诺论坛](http://club.noahedu.com/forum.php?mod=viewthread&tid=137399)
+##论坛地址[>>>](http://club.noahedu.com/forum.php?mod=viewthread&tid=137399)
 
 
