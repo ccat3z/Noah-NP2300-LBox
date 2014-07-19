@@ -4,21 +4,19 @@
 ***
 ##安装方法##
 将安装文件复制到储存卡中,  
-执行lbox.sh 选择"安装",  
+执行lbox.sh 选择"安装/升级",  
 重启即可.  
-注意保留log文件夹(安装记录),script文件夹(卸载脚本)及lbox.sh(卸载程序)  
 
 ##卸载方法##
-将log文件夹和script文件夹与lbox.sh复制到同一目录下中,  
 执行lbox.sh 选择"卸载",  
 重启即可.  
 
 ##升级方法##
-将log文件夹和script文件夹与lbox.sh复制到同一目录下中,  
-执行lbox.sh 选择"卸载",  
+将安装文件复制到储存卡中,  
+执行lbox.sh 选择"安装/升级",  
 重启即可.  
 
-*** 
+***
 ##论坛地址[>>>][noahclub]##
 [noahclub]: http://club.noahedu.com/forum.php?mod=viewthread&tid=137399 "阿诺论坛"
 ***
